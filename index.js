@@ -6,7 +6,15 @@ var ssdk = function (apiName, params) {
     _callback_map[callbackId] = params;
     let handlerInterface = 'Native';
     if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
-        window.webkit.messageHandlers[handlerInterface].postMessage(params);
+        // window.webkit.messageHandlers[handlerInterface].postMessage(params);
+        var iosParam={}
+        for (var key in params){
+            if(typeof params[key] != "function"){
+                iosParam[key]=params[key]
+            }
+        }
+        iosParam['function'] =
+            window.webkit.messageHandlers[handlerInterface].postMessage({"function":apiName,"parameters":iosParam});
     } else {
         //安卓传输不了js json对象
         window[handlerInterface]['handler'](apiName, JSON.stringify(params));
